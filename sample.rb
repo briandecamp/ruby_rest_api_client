@@ -28,7 +28,7 @@ puts c.get_rrsets_by_type(first_zone_name, 'A')
 # the value returned from update rrset is broken.
 # the operation is performed correctly, but
 # it returns a GUID instead of JSON,
-# so the python code will throw an error
+# so the ruby code will throw an error
 # the next release of the REST API server fixes this bug
 #puts c.edit_rrset(first_zone_name, "A", "foo", 100, ["10.20.30.40"])
 puts c.get_rrsets first_zone_name
