@@ -2,6 +2,11 @@ if ARGV.length != 2
   raise "Expected use: ruby sample.rb username password"
 end
 
+# for this code to work, you will need to have the Faraday gem (https://github.com/lostisland/faraday)
+# installed on your system:
+#
+# gem install faraday
+
 require_relative 'rest_client'
 
 c = UltraRestApi::RestClient.new(ARGV[0], ARGV[1])

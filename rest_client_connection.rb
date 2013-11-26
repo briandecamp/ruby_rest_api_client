@@ -76,7 +76,7 @@ module UltraRestApi
       base_url = "#{protocol}://#{@host}"
       @client = Faraday.new(:url => base_url) do |c|
         c.use Faraday::Request::UrlEncoded # encode request params as "www-form-urlencoded"
-        c.use Faraday::Response::Logger # log request & response to STDOUT
+        #c.use Faraday::Response::Logger # log request & response to STDOUT
         c.use Faraday::Adapter::NetHttp # perform requests with Net::HTTP
       end
     end
