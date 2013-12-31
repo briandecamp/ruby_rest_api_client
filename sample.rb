@@ -9,7 +9,7 @@ end
 
 require_relative 'rest_client'
 
-c = UltraRestApi::RestClient.new(ARGV[0], ARGV[1], use_http: true, host: 'localhost:8080')
+c = UltraRestApi::RestClient.new(ARGV[0], ARGV[1])
 puts c.version
 puts c.status
 account_details = c.get_account_details
