@@ -13,7 +13,7 @@ module UltraRestApi
     end
 
     def auth(username, password)
-      response = @client.get ('/v1/authorization') do |request|
+      response = @client.post ('/v1/authorization/token') do |request|
         request.params[:grant_type]='password'
         request.params[:username]=username
         request.params[:password]=password
@@ -35,7 +35,7 @@ module UltraRestApi
           body = {}
           if response.body != nil && response.body != ''
             body = JSON.parse(response.body)
-            if body.is_a?(Hash) && retry_call && response.status == 400 && body["errorCode"] == 60001
+            if body.is_a?(Hash) && retry_call && (response.status == 400 || response.status == 401) && body["errorCode"] == 60001
               refresh
               return #{method}(url, params, false)
             end
@@ -56,7 +56,7 @@ module UltraRestApi
           body = {}
           if response.body != nil && response.body != ''
             body = JSON.parse(response.body)
-            if body.is_a?(Hash) && retry_call && response.status == 400 && body["errorCode"] == 60001
+            if body.is_a?(Hash) && retry_call && (response.status == 400 || response.status == 401) && body["errorCode"] == 60001
               refresh
               return #{method}(url, in_body, false)
             end
@@ -82,7 +82,7 @@ module UltraRestApi
     end
 
     def refresh
-      response = @client.get('/v1/authorization/refresh') do |request|
+      response = @client.post('/v1/authorization/token') do |request|
         request.params[:grant_type]='refresh_token'
         request.params[:refreshToken]=@refresh_token
       end

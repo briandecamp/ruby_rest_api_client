@@ -21,8 +21,11 @@ module UltraRestApi
     #     c = RestClient.new("myUname", "myPwd")
     #     c = RestClient.new("myUname", "myPwd", host: 'restapi-useast1b01-01.ct.ultradns.net:8080')
     def initialize(username, password, options = {})
-      use_http = options['use_http']
-      host = options['host'] || 'restapi.ultradns.com'
+      puts options
+      use_http = options[:use_http] || false
+      puts use_http
+      host = options[:host] || 'restapi.ultradns.com'
+      puts host
       @rest_api_connection = RestClientConnection.new(use_http, host)
       @rest_api_connection.auth(username, password)
     end
@@ -41,7 +44,7 @@ module UltraRestApi
       zone_properties = {:name => zone_name, :accountName => account_name, :type => 'PRIMARY'}
       primary_zone_info = {:forceImport => true, :createType => 'NEW'}
 
-      zone_data = {:zoneProperties => zone_properties, :primaryZoneInfo => primary_zone_info}
+      zone_data = {:properties => zone_properties, :primaryCreateInfo => primary_zone_info}
       @rest_api_connection.post('/v1/zones', zone_data)
     end
 
