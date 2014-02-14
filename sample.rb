@@ -13,13 +13,15 @@ c = UltraRestApi::RestClient.new(ARGV[0], ARGV[1])
 puts c.version
 puts c.status
 account_details = c.get_account_details
-account_name = account_details['list'][0]['accountName']
+puts account_details
+account_name = account_details['accounts'][0]['accountName']
 puts account_name
 puts c.create_primary_zone(account_name, 'foo.invalid.')
 puts c.get_zone_metadata 'foo.invalid.'
 puts c.delete_zone 'foo.invalid.'
 all_zones = c.get_zones_of_account(account_name, q: {zone_type:'PRIMARY'}, offset: 0, limit: 5)
-first_zone_name = all_zones['list'][0]['properties']['name']
+puts all_zones
+first_zone_name = all_zones['zones'][0]['properties']['name']
 puts first_zone_name
 puts c.get_rrsets first_zone_name
 puts c.create_rrset(first_zone_name, 'A', 'foo', 300, '1.2.3.4')
@@ -30,4 +32,4 @@ puts c.get_rrsets first_zone_name
 puts c.get_rrsets_by_type(first_zone_name, 'A')
 puts c.delete_rrset(first_zone_name, 'A', 'foo')
 puts c.get_rrsets first_zone_name
-puts c.get_rrsets_by_type(first_zone_name, 'A')
+puts c.get_rrsets_by_type(first_zone_name, 'A') #this will generated a 404 error since the resource records set was deleted
