@@ -3,6 +3,12 @@ module UltraRestApi
   require 'faraday'
   require 'json'
 
+    # Copyright 2000-2014 NeuStar, Inc. All rights reserved.
+    # NeuStar, the Neustar logo and related names and logos are registered
+    # trademarks, service marks or tradenames of NeuStar, Inc. All other
+    # product names, company names, marks, logos and symbols may be trademarks
+    # of their respective owners.
+
   class RestClientConnection
     def initialize(use_http = false, host= 'restapi.ultradns.com')
       @use_http = use_http
