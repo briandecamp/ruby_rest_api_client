@@ -209,7 +209,7 @@ module UltraRestApi
       rdata = [rdata] unless rdata.kind_of? Array
 
       rrset = {:ttl => ttl, :rdata => rdata}
-      @rest_api_connection.put("/v1/zones/#{zone_name}/rrsets/#{rtype}/#{owner_name}/default", rrset)
+      @rest_api_connection.put("/v1/zones/#{zone_name}/rrsets/#{rtype}/#{owner_name}", rrset)
 
     end
 
