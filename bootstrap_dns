@@ -10,6 +10,16 @@
     # product names, company names, marks, logos and symbols may be trademarks
     # of their respective owners.
 
+=begin
+  /etc/oracle/ultradns.json:
+  {
+   "username" : <username>,
+   "password" : <password>,
+   "galaxy" : "us2",
+   "zone" : "opcstorage.com.",
+   "subzone" : "bdecamp"
+  }
+=end
 
 require_relative 'rest_client'
 require 'json'
