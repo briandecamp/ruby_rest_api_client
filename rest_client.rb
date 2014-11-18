@@ -194,6 +194,12 @@ module UltraRestApi
       @rest_api_connection.post("/v1/zones/#{zone_name}/rrsets/#{rtype}/#{owner_name}", rrset)
     end
 
+    def create_rrset_profile(zone_name, rtype, owner_name, ttl, rdata, profile={})
+      rdata = [rdata] unless rdata.kind_of? Array
+  
+      rrset = {:ttl => ttl, :rdata => rdata, :profile => profile}
+      @rest_api_connection.post("/v1/zones/#{zone_name}/rrsets/#{rtype}/#{owner_name}", rrset)
+    end
     # Updates an existing RRSet in the specified zone.
     #
     # === Required Parameters
@@ -220,6 +226,14 @@ module UltraRestApi
 
     end
 
+    def edit_rrset_profile(zone_name, rtype, owner_name, ttl, rdata, profile = {})
+      rdata = [rdata] unless rdata.kind_of? Array
+    
+      rrset = {:ttl => ttl, :rdata => rdata, :profile => profile}
+      @rest_api_connection.put("/v1/zones/#{zone_name}/rrsets/#{rtype}/#{owner_name}", rrset)
+    
+    end
+  
     # Delete an rrset
     #
     # === Required Parameters

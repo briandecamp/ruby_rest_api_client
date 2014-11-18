@@ -1,0 +1,80 @@
+#!/usr/bin/ruby
+# for this code to work, you will need to have the Faraday gem (https://github.com/lostisland/faraday)
+# installed on your system:
+#
+# gem install faraday
+
+    # Copyright 2000-2014 NeuStar, Inc. All rights reserved.
+    # NeuStar, the Neustar logo and related names and logos are registered
+    # trademarks, service marks or tradenames of NeuStar, Inc. All other
+    # product names, company names, marks, logos and symbols may be trademarks
+    # of their respective owners.
+
+
+require_relative 'rest_client'
+require 'json'
+require 'socket'
+
+def get_rrset(owner_name)
+  begin
+    # assumes there is only one rdata value
+  $con.get_rrsets($properties['zone'], {q: {owner: owner_name}})['rrSets'].find {|r| r['ownerName'].start_with?(owner_name)}
+  rescue RuntimeError => err
+    if JSON.parse(err.message)[0]['errorCode'] == 70002
+      nil
+    else
+      raise err
+    end
+  end
+end
+
+def set_address(prefix_name)
+  default_profile = {
+    "@context" => "http://schemas.ultradns.com/RDPool.jsonschema", 
+    "order" => "ROUND_ROBIN",
+    "description" => "1"
+  }
+  default_ttl = 300
+  owner_name = "#{prefix_name}.#{$properties['subzone']}"
+  rrset = get_rrset(owner_name)
+  
+  if(rrset)
+    # assume only one rdata
+    existing_ip_address = rrset['rdata'][0]
+    if(existing_ip_address == $current_ip_address) 
+      puts "#{owner_name} #{existing_ip_address} already set to #{$current_ip_address}"
+    else
+      puts "Updating #{owner_name} to #{$current_ip_address}"
+      profile = rrset['profile']
+      ttl = rrset['ttl']
+      $con.edit_rrset_profile($properties['zone'], "A", owner_name, ttl, [$current_ip_address], profile)
+    end
+  else
+    puts "Setting #{owner_name} to #{$current_ip_address}"
+    $con.create_rrset_profile($properties['zone'], "A", owner_name, default_ttl, [$current_ip_address], default_profile)
+  end
+end
+
+$properties = JSON.parse(File.read('/etc/oracle/ultradns.json'))
+
+$con = UltraRestApi::RestClient.new($properties['username'], $properties['password'])
+
+addresses = Socket.ip_address_list.reject {|a| !a.ipv4? || a.ipv4_loopback? || a.ip_address.start_with?("192.168")}.map {|a| a.ip_address}
+if addresses.size < 1
+  raise RuntimeError, "no valid IP Address for local machine"
+end
+puts "IPv4: #{addresses}"
+
+$current_ip_address = addresses[0]
+puts "Current IP Address: #{$current_ip_address}"
+
+set_address "#{$properties['galaxy']}"
+set_address "universe1.#{$properties['galaxy']}"
+if ($properties['galaxy'] == "us2") 
+  set_address "universe"
+  set_address "replication1.#{$properties['galaxy']}"
+  set_address "replication.#{$properties['galaxy']}"
+end
+
+rrsets = $con.get_rrsets_by_type($properties['zone'], "A", {q: {owner: "#{$properties['galaxy']}.#{$properties['subzone']}.#{$properties['zone']}"}})
+puts JSON.pretty_generate(rrsets)
