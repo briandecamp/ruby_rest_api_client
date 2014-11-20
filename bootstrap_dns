@@ -26,7 +26,7 @@ class BootstrapDNS
     @galaxy = properties['galaxy']
     @zone = properties['zone']
     @subzone = properties['subzone']
-    addresses = Socket.ip_address_list.reject {|a| !a.ipv4? || a.ipv4_loopback? || a.ip_address.start_with?("192.168")}.map {|a| a.ip_address}
+    addresses = Socket.ip_address_list.reject {|a| !a.ipv4? || a.ipv4_loopback? || a.ip_address.start_with?("192.168") || a.ip_address.start_with?("10.0.0")}.map {|a| a.ip_address}
     if addresses.size < 1
       raise RuntimeError, "no valid IP Address for local machine"
     end
